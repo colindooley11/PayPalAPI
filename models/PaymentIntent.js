@@ -1,3 +1,4 @@
+var paymentIntent =
 {
     "transaction": {
     "currency": "GBP"
@@ -43,4 +44,4 @@
         "amount": 30.25
     }
 ]
-}
+};
