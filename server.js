@@ -25,33 +25,30 @@ router.get('/', function(req, res) {
 
 router.route('/PayPal/Payment').post(function(req, res) {
         async.waterfall([
-            function(callback) {
-                request
-                    .post('https://api.sandbox.paypal.com/v1/oauth2/token')
-                    .send("grant_type=client_credentials")
-                    .set('Content-Type', 'application/x-www-form-urlencoded')
-                    .set('Authorization', 'Basic QVFmYjNPUFpTSXFzVkpiaFl0ODU2Q3FQOEk1aEttak9ad2psSnNYYm1nZEdEZWprSTZEa1JjcGxjVFlBNnVtR25yNDVxXzZuRlJINTRwaEk6RVA2Tmt6bmhrSjJ6TWRiX0l6Q21NU3BuYzB4ZE5mN09rbFE5N1JtNFU0OTg3SVUxc2VtQy1fNWVpRXk4UnBxc3VUWDcwQkdyWWdjU3R0bkM=')
-                    .end(function (err, res) {
-                        callback(err,res);
-                    });
-            },
-            function(authRequestToken, callback)
-            {
-                token = authRequestToken.body.access_token;
-                console.dir(token);
-                //console.dir(payPalPayment);
-                request
-                    .post('https://api.sandbox.paypal.com/v1/payments/payment')
-                    .send(payPalPayment)
-                    .set('Content-Type', 'application/json')
-                    .set('Authorization', 'Bearer ' + token)
-                    .end(function (err, res) {
-                        callback(err,res)
-                    });
-            }
+                function(callback) {
+                    request
+                        .post('https://api.sandbox.paypal.com/v1/oauth2/token')
+                        .send("grant_type=client_credentials")
+                        .set('Content-Type', 'application/x-www-form-urlencoded')
+                        .set('Authorization', 'Basic QVFmYjNPUFpTSXFzVkpiaFl0ODU2Q3FQOEk1aEttak9ad2psSnNYYm1nZEdEZWprSTZEa1JjcGxjVFlBNnVtR25yNDVxXzZuRlJINTRwaEk6RVA2Tmt6bmhrSjJ6TWRiX0l6Q21NU3BuYzB4ZE5mN09rbFE5N1JtNFU0OTg3SVUxc2VtQy1fNWVpRXk4UnBxc3VUWDcwQkdyWWdjU3R0bkM=')
+                        .end(function (err, res) {
+                            callback(err,res);
+                        });
+                },
+                function(authRequest, callback)
+                {
+                    request
+                        .post('https://api.sandbox.paypal.com/v1/payments/payment')
+                        .send(payPalPayment)
+                        .set('Content-Type', 'application/json')
+                        .set('Authorization', 'Bearer ' +  authRequest.body.access_token)
+                        .end(function (err, res) {
+                            callback(err,res)
+                        });
+                }
             ],
-            function(payPalResponse) {
-                res.json(payPalResponse.status, {msg : payPalResponse.body});
+            function(err,res) {
+                res.json(res.status, {msg : res.body});
             });
 });
 
